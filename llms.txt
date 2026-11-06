@@ -1,0 +1,26 @@
+# anylanguagemodel-litert-lm
+
+> A LiteRT-LM backend for AnyLanguageModel (Swift). `LiteRTLMLanguageModel` conforms to AnyLanguageModel's `LanguageModel`, so a `LanguageModelSession` runs Gemma 4 and other `.litertlm` models on iPhone and Mac, and `@Generable` output uses LiteRT-LM's constrained decoding. iOS 17+ and macOS 14+. Community package, not affiliated with Google, Apple or Hugging Face.
+
+- Module and product: `AnyLanguageModelLiteRTLM`. Type: `LiteRTLMLanguageModel`.
+- `LiteRTLMLanguageModel(.gemma4_E2B)` downloads about 2.6 GB into Application Support/LiteRTModels on first use; `load()` downloads and loads the engine.
+- Other models: `LiteRTLMLanguageModel(modelFileURL:)` for a file on disk, `LiteRTLMLanguageModel(huggingFaceRepo:fileName:)` for Hugging Face.
+- `respond(to:)`, `streamResponse(to:)`, `respond(to:generating:)`, `streamResponse(to:generating:)` and `respond(to:schema:)` all work; `GenerationOptions` sampling, temperature and `maximumResponseTokens` apply (topK at most 64).
+- Runtime: swift-litert-lm 0.3.x = LiteRT-LM v0.19.0. No tool calling or image input yet.
+
+## Docs
+
+- [README](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/README.md): quickstart, structured output, streaming, own model files, availability and errors, generation options, behavior differences
+- [AGENTS.md](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/AGENTS.md): which API for which task, and the rules that fail on a real device
+- [Tested devices](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/docs/tested-devices.md): device, OS, runtime version and results
+
+## Sample
+
+- [Samples/LiteRTLMDemo](https://github.com/john-rocky/anylanguagemodel-litert-lm/tree/main/Samples/LiteRTLMDemo): streaming chat, structured output, and a device self-test (XcodeGen project, iOS and macOS)
+
+## Related
+
+- [AnyLanguageModel](https://github.com/huggingface/AnyLanguageModel)
+- [swift-litert-lm](https://github.com/john-rocky/swift-litert-lm): the runtime package; `LiteRTChat` for images and audio
+- [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM)
+- [hf-to-litertlm](https://github.com/john-rocky/hf-to-litertlm): convert a Hugging Face model to `.litertlm`

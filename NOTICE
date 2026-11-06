@@ -1,0 +1,20 @@
+anylanguagemodel-litert-lm
+Copyright 2026 the anylanguagemodel-litert-lm authors.
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+This package depends on the projects below. Their code is fetched by Swift Package
+Manager and is not copied into this repository.
+
+AnyLanguageModel
+    https://github.com/huggingface/AnyLanguageModel
+    Apache License, Version 2.0.
+
+swift-litert-lm
+    https://github.com/john-rocky/swift-litert-lm
+    Apache License, Version 2.0. It vendors the LiteRT-LM Swift wrapper and, at build
+    time, downloads the LiteRT-LM runtime binaries from the official LiteRT-LM GitHub
+    releases (Copyright Google LLC, Apache License, Version 2.0).
+
+LiteRT-LM
+    https://github.com/google-ai-edge/LiteRT-LM

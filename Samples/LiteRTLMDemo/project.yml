@@ -1,0 +1,57 @@
+# XcodeGen spec for the LiteRTLMDemo sample app.
+#
+#   brew install xcodegen          # if needed
+#   cd Samples/LiteRTLMDemo
+#   xcodegen generate              # produces LiteRTLMDemo.xcodeproj
+#   open LiteRTLMDemo.xcodeproj    # set your team, then run on an iPhone
+#
+# LiteRT-LM uses the Metal GPU only on a physical device in an Xcode-signed app; the
+# iOS Simulator runs on the CPU. The app also builds for macOS.
+
+name: LiteRTLMDemo
+
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "17.0"
+    macOS: "14.0"
+  createIntermediateGroups: true
+
+packages:
+  anylanguagemodel-litert-lm:
+    # The package at the repository root (two levels up).
+    path: ../..
+  AnyLanguageModel:
+    url: https://github.com/huggingface/AnyLanguageModel
+    from: 1.2.0
+
+targets:
+  LiteRTLMDemo:
+    type: application
+    supportedDestinations: [iOS, macOS]
+    sources:
+      - path: Sources
+    dependencies:
+      - package: anylanguagemodel-litert-lm
+        product: AnyLanguageModelLiteRTLM
+      - package: AnyLanguageModel
+        product: AnyLanguageModel
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.litertlmdemo
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: LiteRT-LM Demo
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+        SWIFT_VERSION: "6.0"
+        CODE_SIGN_STYLE: Automatic
+        # Set your team to sign for a device, or do it in Xcode's Signing pane:
+        # DEVELOPMENT_TEAM: ABCDE12345
+        "CODE_SIGN_IDENTITY[sdk=macosx*]": "-"
+        # A macOS app keeps embedded libraries in Contents/Frameworks; LiteRT-LM's macOS
+        # runtime is a dylib there. (XcodeGen's default here is the iOS path.)
+        "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "$(inherited) @executable_path/../Frameworks"
