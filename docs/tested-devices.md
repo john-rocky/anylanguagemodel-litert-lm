@@ -10,7 +10,7 @@ Each row is one run of this package's checks with Gemma 4 E2B (`gemma-4-E2B-it.l
 |---|---|---|---|---|---|---|---|---|---|---|
 | Mac (Mac16,9) | macOS 27.0 (26A428) | v0.19.0 (0.3.0) | integration tests | PASS | PASS | 3/3 | 3/3 | 6/6 | `integration_4.log` | 2026-11-07 |
 | Mac (Mac16,9) | macOS 27.0 (26A428) | v0.19.0 (0.3.0) | sample self-test | PASS | PASS | 3/3 | 3/3 | 6/6 | `mac_selftest.log` | 2026-11-07 |
-| iPhone 18 Pro (iPhone19,2) | iOS 27.2 | v0.19.0 (0.3.0) | sample self-test | not run yet | | | | | | |
+| iPhone 18 Pro (iPhone19,2) | iOS 27.2 (24B5099f) | v0.19.0 (0.3.0) | sample self-test (commit `27656a2`) | PASS | PASS | 3/3 | 3/3 | 6/6 | `all.log` | 2026-11-07 |
 
 What passes:
 
@@ -27,3 +27,8 @@ What passes:
 
 The types are `CafeReview`, `TripPlan` and `Stop` from `Samples/LiteRTLMDemo/Sources/Types.swift`.
 No speed is recorded here for the Mac.
+
+The iPhone 18 Pro row is a Release build of commit `27656a2` (Xcode 27.0). Speed on that iPhone on
+2026-11-07: `respond` decoded 61.1 tokens per second on the first request after the app's first launch
+(`core.log`) and 86.2 on the first request of a later launch (`all.log`); `flat` took 1.5 s and
+`nested` 3.6 to 3.9 s in both runs.
