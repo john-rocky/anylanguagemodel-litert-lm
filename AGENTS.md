@@ -28,22 +28,23 @@ LiteRT-LM v0.19.0. Community package, not affiliated with Google, Apple or Huggi
 
 ## Rules that fail on a real device when broken
 
-1. **Pin a tag.** `.package(url: "https://github.com/john-rocky/anylanguagemodel-litert-lm", from: "0.1.0")`,
+1. **Depend on a tagged release.** `.package(url: "https://github.com/john-rocky/anylanguagemodel-litert-lm", from: "0.1.0")`,
    next to `.package(url: "https://github.com/huggingface/AnyLanguageModel", from: "1.2.0")`. This package
-   follows swift-litert-lm up to its next minor version (0.3.x = LiteRT-LM v0.19.0).
+   depends on swift-litert-lm `.upToNextMinor(from: "0.3.0")` (0.3.x = LiteRT-LM v0.19.0); a new minor of
+   this package may move to a new runtime, so use `.upToNextMinor(from: "0.1.0")` to stay on one.
 2. **The Metal GPU engages only in an Xcode-signed app on a physical device.** The iOS Simulator
    runs on the CPU. Do not report simulator speed as device speed.
 3. **Do not commit or bundle the model.** `LiteRTLMLanguageModel(.gemma4_E2B)` downloads about 2.6 GB
    into `Application Support/LiteRTModels` on first use.
-4. **topK is at most 64; do not pass a larger k some other way.** LiteRT-LM v0.19.0 builds its GPU
-   sampler's code in proportion to k. With k = Int32.max a Mac test process passed 10 GB within
-   seconds (2026-11-07, macOS 27.0); on an iPhone that is the app being killed.
+4. **topK is at most 64; do not pass a larger k through LiteRTLM's `SamplerConfig` either.** LiteRT-LM
+   v0.19.0 recreates its GPU sampler for a larger k, with GPU code that grows with k. With
+   k = Int32.max a Mac test process passed 10 GB within seconds (2026-11-07, macOS 27.0).
 5. **After an error or a cancel, keep the model and the session.** Each request runs in a new
    LiteRT-LM conversation, so a failed or cancelled request does not break the next one. On a Mac
    (macOS 27.0, LiteRT-LM v0.19.0) the next request answered after each of: a missing file, three
    broken files, an unsupported schema, a cancelled `respond` and a cancelled stream.
 6. **One generation at a time per model.** A second request waits its turn. Each distinct
-   combination of file, backend, `maxTokens` and `cacheDirectory` loads its own engine and its
+   combination of file, backend, `maxTokens`, `cacheDirectory` and `enableBenchmark` loads its own engine and its
    own memory, so do not make variants of one model to run requests in parallel.
 7. **Do not rely on key order in a `@Generable` reply.** It is neither declaration order nor
    alphabetical, and it changes between runs; a streamed value fills in a different order each time.
@@ -58,7 +59,8 @@ LiteRT-LM v0.19.0. Community package, not affiliated with Google, Apple or Huggi
 10. **No `import LiteRTFoundation` is needed, also with `MemberImportVisibility` on** (new Xcode 27
     projects turn it on). `.gemma4_E2B` is this package's `LiteRTLMLanguageModel.CatalogModel`, and
     `.gpu` and `.cpu()` come through its re-export of `Backend`. Do not write swift-litert-lm's
-    `LiteRTModel` in app code: with `MemberImportVisibility` on, its cases need `import LiteRTFoundation`.
+    `LiteRTModel` in app code: it is not re-exported, so the type and its cases need `import LiteRTFoundation`;
+    `LiteRTLMLanguageModel.CatalogModel(_:)` takes one if you have it.
 11. **Numbers stay with their device and runtime.** Results so far are in
     [docs/tested-devices.md](docs/tested-devices.md). Do not extrapolate to other devices or runtime
     versions.

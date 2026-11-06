@@ -30,5 +30,5 @@ No speed is recorded here for the Mac.
 
 The iPhone 18 Pro row is a Release build of commit `27656a2` (Xcode 27.0). Speed on that iPhone on
 2026-11-07: `respond` decoded 61.1 tokens per second on the first request after the app's first launch
-(`core.log`) and 86.2 on the first request of a later launch (`all.log`); `flat` took 1.5 s and
-`nested` 3.6 to 3.9 s in both runs.
+(`core.log`) and 86.2 on the first request of a later launch (`all.log`); `stream` decoded 88.6
+(`core.log`) and 88.9 (`all.log`); `flat` took 1.5 s and `nested` 3.6 to 3.9 s in both runs.
