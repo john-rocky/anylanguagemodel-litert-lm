@@ -55,8 +55,10 @@ LiteRT-LM v0.19.0. Community package, not affiliated with Google, Apple or Huggi
    macOS runtime is a dylib that Xcode embeds in `Contents/Frameworks`. A multiplatform target that
    keeps the iOS value (`@executable_path/Frameworks`) builds, then fails at launch with
    `Library not loaded: @rpath/libCLiteRTLM_mac.dylib`. The sample's `project.yml` sets it.
-10. **No `import LiteRTFoundation` is needed.** `.gemma4_E2B`, `.gpu` and `.cpu()` resolve through this
-    package. The type name `LiteRTModel` itself is not visible without importing `LiteRTFoundation`.
+10. **No `import LiteRTFoundation` is needed, also with `MemberImportVisibility` on** (new Xcode 27
+    projects turn it on). `.gemma4_E2B` is this package's `LiteRTLMLanguageModel.CatalogModel`, and
+    `.gpu` and `.cpu()` come through its re-export of `Backend`. Do not write swift-litert-lm's
+    `LiteRTModel` in app code: with `MemberImportVisibility` on, its cases need `import LiteRTFoundation`.
 11. **Numbers stay with their device and runtime.** Results so far are in
     [docs/tested-devices.md](docs/tested-devices.md). Do not extrapolate to other devices or runtime
     versions.

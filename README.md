@@ -169,7 +169,17 @@ model needs a device with at least 7 GB of RAM; `allowUnsafeMemory: true` skips 
 
 ## What resolving fetches
 
-<!-- filled from the empty-cache resolve measurement -->
+Resolving an app package that depends on this package and AnyLanguageModel, with an empty SwiftPM
+cache (2026-11-07, macOS 27.0, Xcode 27.0 (27A266a), Swift 6.4):
+
+| What | From | Size |
+|---|---|---|
+| 7 git repositories: swift-syntax, swift-collections, AnyLanguageModel, swift-litert-lm, swift-http-types, JSONSchema, EventSource | GitHub | 72.0 MB (swift-syntax 41.5 MB, swift-collections 22.5 MB) |
+| The LiteRT-LM v0.19.0 runtime: `CLiteRTLM.xcframework.zip` (iOS) and `CLiteRTLM_mac.xcframework.zip` (macOS) | LiteRT-LM's GitHub release | 95.8 MB + 47.0 MB |
+| A swift-syntax prebuilt for macros (`swift package` only; Xcode builds swift-syntax from source) | download.swift.org | 20.1 MB |
+
+The LiteRT-LM repository itself is not cloned, so resolving needs no git-lfs. The git sizes are the
+packs of the clones. A dependency by URL also clones this repository.
 
 ## Behavior differences
 

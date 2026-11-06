@@ -8,7 +8,7 @@ Each row is one run of this package's checks with Gemma 4 E2B (`gemma-4-E2B-it.l
 
 | Device | OS | LiteRT-LM (swift-litert-lm) | Check | respond | stream | flat | nested | failure paths | Log | Date |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Mac (Mac16,9) | macOS 27.0 (26A428) | v0.19.0 (0.3.0) | integration tests | PASS | PASS | 3/3 | 3/3 | 6/6 | `integration_3.log` | 2026-11-07 |
+| Mac (Mac16,9) | macOS 27.0 (26A428) | v0.19.0 (0.3.0) | integration tests | PASS | PASS | 3/3 | 3/3 | 6/6 | `integration_4.log` | 2026-11-07 |
 | Mac (Mac16,9) | macOS 27.0 (26A428) | v0.19.0 (0.3.0) | sample self-test | PASS | PASS | 3/3 | 3/3 | 6/6 | `mac_selftest.log` | 2026-11-07 |
 | iPhone 18 Pro (iPhone19,2) | iOS 27.2 | v0.19.0 (0.3.0) | sample self-test | not run yet | | | | | | |
 

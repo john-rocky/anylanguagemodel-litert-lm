@@ -39,7 +39,9 @@ let package = Package(
         "AnyLanguageModelLiteRTLM",
         .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
         .product(name: "LiteRTLM", package: "swift-litert-lm"),
-      ]
+      ],
+      // New Xcode 27 app projects turn this on; the README examples compile under it here.
+      swiftSettings: [.enableUpcomingFeature("MemberImportVisibility")]
     ),
   ]
 )

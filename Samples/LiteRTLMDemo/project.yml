@@ -48,6 +48,8 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_MACCATALYST: NO
         SWIFT_VERSION: "6.0"
+        # As in a new Xcode 27 project: each file sees only the members of modules it imports.
+        SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY: YES
         CODE_SIGN_STYLE: Automatic
         # Set your team to sign for a device, or do it in Xcode's Signing pane:
         # DEVELOPMENT_TEAM: ABCDE12345

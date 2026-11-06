@@ -20,7 +20,7 @@ import os
 /// transcript.
 ///
 /// `@Generable` output goes through LiteRT-LM's constrained decoding, so the reply is JSON
-/// that matches the type's schema. The properties are generated in alphabetical order.
+/// that matches the type's schema. The keys of the reply come in no fixed order.
 public struct LiteRTLMLanguageModel: LanguageModel {
   /// Why the model is not ready.
   public enum UnavailableReason: Equatable, Hashable, Sendable {
@@ -69,7 +69,7 @@ public struct LiteRTLMLanguageModel: LanguageModel {
   ///     `decodeTokensPerSecond`, `prefillTokensPerSecond` and `timeToFirstTokenSeconds`.
   ///   - onDownloadProgress: Called as the model file downloads.
   public init(
-    _ model: LiteRTModel,
+    _ model: CatalogModel,
     backend: Backend = .gpu,
     storageDirectory: URL? = nil,
     cacheDirectory: URL? = nil,
@@ -78,9 +78,10 @@ public struct LiteRTLMLanguageModel: LanguageModel {
     onDownloadProgress: (@Sendable (DownloadProgress) -> Void)? = nil
   ) {
     self.init(
-      source: .catalog(model, storageDirectory: storageDirectory, allowUnsafeMemory: allowUnsafeMemory),
+      source: .catalog(
+        model.model, storageDirectory: storageDirectory, allowUnsafeMemory: allowUnsafeMemory),
       backend: backend,
-      maxTokens: model.defaultMaxTokens,
+      maxTokens: model.model.defaultMaxTokens,
       cacheDirectory: cacheDirectory,
       enableBenchmark: enableBenchmark,
       onDownloadProgress: onDownloadProgress)

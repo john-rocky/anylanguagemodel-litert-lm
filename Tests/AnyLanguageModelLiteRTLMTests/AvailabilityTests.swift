@@ -30,8 +30,9 @@ import Testing
 
   @Test func notEnoughRAM() throws {
     let storage = try temporaryDirectory()
+    let gemma = LiteRTLMLanguageModel.CatalogModel.gemma4_E2B.model
     let small = LiteRTLMLanguageModel(
-      source: .catalog(.gemma4_E2B, storageDirectory: storage, allowUnsafeMemory: false),
+      source: .catalog(gemma, storageDirectory: storage, allowUnsafeMemory: false),
       backend: .gpu, maxTokens: 2048, cacheDirectory: storage, enableBenchmark: false,
       onDownloadProgress: nil, store: EngineStore(loader: FakeLoader(engine: FakeEngine([.reply("x")]))),
       physicalMemory: { 4_000_000_000 })
@@ -39,7 +40,7 @@ import Testing
       small.availability
         == .unavailable(.insufficientMemory(availableBytes: 4_000_000_000, requiredBytes: 7_000_000_000)))
     let allowed = LiteRTLMLanguageModel(
-      source: .catalog(.gemma4_E2B, storageDirectory: storage, allowUnsafeMemory: true),
+      source: .catalog(gemma, storageDirectory: storage, allowUnsafeMemory: true),
       backend: .gpu, maxTokens: 2048, cacheDirectory: storage, enableBenchmark: false,
       onDownloadProgress: nil, physicalMemory: { 4_000_000_000 })
     #expect(allowed.availability == .unavailable(.notDownloaded))
@@ -106,5 +107,13 @@ import Testing
     #expect(catalog.spec?.maxTokens == 2048)
     #expect(catalog.spec?.backend == .gpu)
     #expect(catalog.spec?.modelPath.hasSuffix("LiteRTModels/gemma-4-E2B-it.litertlm") == true)
+  }
+
+  @Test func theCatalogCaseIsThisPackagesOwn() {
+    // `.gemma4_E2B` resolves to this package's static member: this file has
+    // MemberImportVisibility on and does not import LiteRTFoundation.
+    let model: LiteRTLMLanguageModel.CatalogModel = .gemma4_E2B
+    #expect(model == .gemma4_E2B)
+    #expect(LiteRTLMLanguageModel(model).spec?.modelPath.hasSuffix("/gemma-4-E2B-it.litertlm") == true)
   }
 }
