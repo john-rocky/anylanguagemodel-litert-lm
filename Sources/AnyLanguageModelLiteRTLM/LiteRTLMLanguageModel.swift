@@ -20,7 +20,7 @@ import os
 /// transcript.
 ///
 /// `@Generable` output goes through LiteRT-LM's constrained decoding, so the reply is JSON
-/// that matches the type's schema. The keys of the reply come in no fixed order.
+/// that matches the type's schema, with the keys in alphabetical order.
 public struct LiteRTLMLanguageModel: LanguageModel {
   /// Why the model is not ready.
   public enum UnavailableReason: Equatable, Hashable, Sendable {

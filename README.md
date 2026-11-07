@@ -197,9 +197,11 @@ packs of the clones. A dependency by URL also clones this repository.
 
 ## Behavior differences
 
-- The keys of a `@Generable` reply come in no fixed order, neither declaration order nor alphabetical,
-  so a streamed value fills in its properties in a different order from one run to the next. The
-  decoded value is the same either way.
+- The properties of a `@Generable` reply are generated in alphabetical order, not declaration order:
+  the backend sends the schema with sorted keys, and LiteRT-LM's constrained decoding follows the
+  schema's order, so a streamed value fills in alphabetically. `rawContent.jsonString` lists the keys in
+  no fixed order, because AnyLanguageModel's `GeneratedContent(json:)` keeps an object's keys in a
+  dictionary. The decoded value is the same either way.
 - Constrained decoding enforces the shape, ranges and choices, not the content: a `String` property can
   come back empty.
 - topK is at most 64, the default top-k capacity of LiteRT-LM v0.19.0's GPU sampler. Past it, LiteRT-LM

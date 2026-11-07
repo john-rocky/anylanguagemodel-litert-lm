@@ -46,8 +46,9 @@ LiteRT-LM v0.19.0. Community package, not affiliated with Google, Apple or Huggi
 6. **One generation at a time per model.** A second request waits its turn. Each distinct
    combination of file, backend, `maxTokens`, `cacheDirectory` and `enableBenchmark` loads its own engine and its
    own memory, so do not make variants of one model to run requests in parallel.
-7. **Do not rely on key order in a `@Generable` reply.** It is neither declaration order nor
-   alphabetical, and it changes between runs; a streamed value fills in a different order each time.
+7. **A `@Generable` reply comes in alphabetical key order, not declaration order.** The backend sorts
+   the schema's keys and LiteRT-LM's constrained decoding follows them; `rawContent.jsonString` shows
+   the keys in dictionary order, so do not read the generation order from it.
 8. **No tool calling or image input yet.** A session with tools throws
    `LiteRTLMLanguageModelError.toolsNotSupported` (or set `GenerationOptions.toolCallingMode` to
    `.disallowed`); an image throws `.unsupportedContent`. Audio has no path in AnyLanguageModel; use
