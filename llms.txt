@@ -6,7 +6,7 @@
 - `LiteRTLMLanguageModel(.gemma4_E2B)` downloads about 2.6 GB into Application Support/LiteRTModels on first use; `load()` downloads and loads the engine.
 - Other models: `LiteRTLMLanguageModel(modelFileURL:)` for a file on disk, `LiteRTLMLanguageModel(huggingFaceRepo:fileName:)` for Hugging Face.
 - `respond(to:)`, `streamResponse(to:)`, `respond(to:generating:)`, `streamResponse(to:generating:)` and `respond(to:schema:)` all work; `GenerationOptions` sampling, temperature and `maximumResponseTokens` apply (topK at most 64).
-- Runtime: swift-litert-lm 0.3.x = LiteRT-LM v0.19.0. No tool calling or image input yet.
+- Runtime: swift-litert-lm 0.3.x (0.3.0 = LiteRT-LM v0.19.0, 0.3.1 = v0.19.1). No tool calling or image input yet.
 
 ## Docs
 

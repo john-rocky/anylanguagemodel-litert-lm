@@ -8,8 +8,8 @@ the code.
 **What this is.** A LiteRT-LM backend for AnyLanguageModel 1.2: `LiteRTLMLanguageModel` conforms to
 `LanguageModel`, so `LanguageModelSession`, `@Generable`, `streamResponse` and `GenerationOptions`
 work unchanged. `@Generable` output goes through LiteRT-LM's constrained decoding. The runtime
-comes from [swift-litert-lm](https://github.com/john-rocky/swift-litert-lm) 0.3.x, which runs
-LiteRT-LM v0.19.0. Community package, not affiliated with Google, Apple or Hugging Face.
+comes from [swift-litert-lm](https://github.com/john-rocky/swift-litert-lm) 0.3.x (0.3.0 runs
+LiteRT-LM v0.19.0, 0.3.1 runs v0.19.1). Community package, not affiliated with Google, Apple or Hugging Face.
 
 ## Route
 
@@ -30,8 +30,8 @@ LiteRT-LM v0.19.0. Community package, not affiliated with Google, Apple or Huggi
 
 1. **Depend on a tagged release.** `.package(url: "https://github.com/john-rocky/anylanguagemodel-litert-lm", from: "0.1.0")`,
    next to `.package(url: "https://github.com/huggingface/AnyLanguageModel", from: "1.2.0")`. This package
-   depends on swift-litert-lm `.upToNextMinor(from: "0.3.0")` (0.3.x = LiteRT-LM v0.19.0); a new minor of
-   this package may move to a new runtime, so use `.upToNextMinor(from: "0.1.0")` to stay on one.
+   depends on swift-litert-lm `.upToNextMinor(from: "0.3.0")` (0.3.0 = LiteRT-LM v0.19.0, 0.3.1 = v0.19.1), so a
+   patch release of swift-litert-lm can move the runtime, and so can a new minor of this package.
 2. **The Metal GPU engages only in an Xcode-signed app on a physical device.** The iOS Simulator
    runs on the CPU. Do not report simulator speed as device speed.
 3. **Do not commit or bundle the model.** `LiteRTLMLanguageModel(.gemma4_E2B)` downloads about 2.6 GB

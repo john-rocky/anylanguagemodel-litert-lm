@@ -6,8 +6,8 @@
 // `LanguageModelSession` can run Gemma 4 and other `.litertlm` models on the device.
 // `@Generable` output goes through LiteRT-LM's constrained decoding (llguidance).
 //
-// The runtime comes from swift-litert-lm, which pins one LiteRT-LM release per minor
-// version, so this package follows it up to the next minor version.
+// The runtime comes from swift-litert-lm, and this package follows it up to the next
+// minor version. A patch release can move LiteRT-LM: 0.3.0 runs v0.19.0, 0.3.1 v0.19.1.
 
 import PackageDescription
 
