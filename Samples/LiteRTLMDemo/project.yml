@@ -5,8 +5,8 @@
 #   xcodegen generate              # produces LiteRTLMDemo.xcodeproj
 #   open LiteRTLMDemo.xcodeproj    # set your team, then run on an iPhone
 #
-# LiteRT-LM uses the Metal GPU only on a physical device in an Xcode-signed app; the
-# iOS Simulator runs on the CPU. The app also builds for macOS.
+# On iOS, LiteRT-LM uses the Metal GPU only on a physical device in an Xcode-signed
+# app; the iOS Simulator runs on the CPU. The app also builds for macOS.
 
 name: LiteRTLMDemo
 

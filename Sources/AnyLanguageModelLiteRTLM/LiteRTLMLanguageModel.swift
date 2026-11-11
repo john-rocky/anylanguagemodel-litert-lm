@@ -57,8 +57,8 @@ public struct LiteRTLMLanguageModel: LanguageModel {
   ///
   /// - Parameters:
   ///   - model: The catalog model, such as `.gemma4_E2B`.
-  ///   - backend: Where the model runs. The Metal GPU engages only in a signed app on a
-  ///     physical device; the iOS Simulator runs on the CPU.
+  ///   - backend: Where the model runs. On iOS, the Metal GPU engages only in a signed
+  ///     app on a physical device; the iOS Simulator runs on the CPU.
   ///   - storageDirectory: Where to keep the downloaded file. Defaults to
   ///     Application Support/LiteRTModels.
   ///   - cacheDirectory: Where LiteRT-LM writes its GPU cache (about 0.8 GB for Gemma 4 E2B).
