@@ -2,11 +2,11 @@
 
 A Swift package that adds Gemma 4 and other `.litertlm` models, running on-device on iPhone and Mac, to
 [AnyLanguageModel](https://github.com/huggingface/AnyLanguageModel), Hugging Face's drop-in replacement for Apple's Foundation Models API.
-You write the same `LanguageModelSession` and `@Generable` code, and it builds for iOS 17 and macOS 14 or later, older versions than Apple's own framework supports. I've run it on iOS 27.2 and macOS 27.0.
-Google's [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM) runtime does the work, and its constrained decoding enforces your `@Generable` schema.
+On 2026-11-07, Gemma 4 E2B streamed its reply at 88.6 tokens per second on an iPhone 18 Pro with [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM) v0.19.0.
+Google's LiteRT-LM runtime does the work, and its constrained decoding enforces your `@Generable` schema.
 
-On 2026-11-07, Gemma 4 E2B streamed its reply at 88.6 tokens per second on an iPhone 18 Pro with LiteRT-LM v0.19.0.
-A one-day trip plan built from nested `@Generable` types came back in 3.6 to 3.9 seconds.
+You write the same `LanguageModelSession` and `@Generable` code, and it builds for iOS 17 and macOS 14 or later, older versions than Apple's own framework supports. I've run it on iOS 27.2 and macOS 27.0.
+On the same iPhone that day, a one-day trip plan built from nested `@Generable` types came back in 3.6 to 3.9 seconds.
 Tools and images are not supported yet.
 
 Community package, not affiliated with Google, Apple or Hugging Face.
