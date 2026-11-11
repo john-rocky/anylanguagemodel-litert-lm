@@ -20,7 +20,7 @@ LiteRT-LM v0.19.0, 0.3.1 runs v0.19.1). Community package, not affiliated with G
 | A schema built at run time | `session.respond(to:schema:)` with a `GenerationSchema` | README "Structured output" |
 | Streamed text or a partial value, with a Stop button | `streamResponse(to:)` / `streamResponse(to:generating:)`; Stop = cancel the reading task | README "Streaming", [Samples/LiteRTLMDemo/Sources/ChatView.swift](Samples/LiteRTLMDemo/Sources/ChatView.swift) |
 | A `.litertlm` on disk (bundled, sideloaded, fine-tuned) | `LiteRTLMLanguageModel(modelFileURL:)` | README "Your own model file" |
-| Any `.litertlm` on Hugging Face | `LiteRTLMLanguageModel(huggingFaceRepo:fileName:)` | README "Your own model file" |
+| Any public, ungated `.litertlm` on Hugging Face | `LiteRTLMLanguageModel(huggingFaceRepo:fileName:)` | README "Your own model file" |
 | Download progress, "not downloaded", load errors on screen | `availability`, `load()`, `onDownloadProgress:` | README "Availability and errors", [Samples/LiteRTLMDemo/Sources/LiteRTLMDemoApp.swift](Samples/LiteRTLMDemo/Sources/LiteRTLMDemoApp.swift) |
 | A complete app to copy (chat, structured output, device self-test) | XcodeGen project, iOS and macOS | [Samples/LiteRTLMDemo](Samples/LiteRTLMDemo) |
 | Chat with images or audio, or no AnyLanguageModel at all | swift-litert-lm's `LiteRTChat` | [swift-litert-lm](https://github.com/john-rocky/swift-litert-lm) |
@@ -32,7 +32,7 @@ LiteRT-LM v0.19.0, 0.3.1 runs v0.19.1). Community package, not affiliated with G
    next to `.package(url: "https://github.com/huggingface/AnyLanguageModel", from: "1.2.0")`. This package
    depends on swift-litert-lm `.upToNextMinor(from: "0.3.0")` (0.3.0 = LiteRT-LM v0.19.0, 0.3.1 = v0.19.1), so a
    patch release of swift-litert-lm can move the runtime, and so can a new minor of this package.
-2. **The Metal GPU engages only in an Xcode-signed app on a physical device.** The iOS Simulator
+2. **On iOS, the Metal GPU engages only in an Xcode-signed app on a physical device.** The iOS Simulator
    runs on the CPU. Do not report simulator speed as device speed.
 3. **Do not commit or bundle the model.** `LiteRTLMLanguageModel(.gemma4_E2B)` downloads about 2.6 GB
    into `Application Support/LiteRTModels` on first use.
