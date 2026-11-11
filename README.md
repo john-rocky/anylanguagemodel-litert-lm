@@ -1,14 +1,19 @@
 # AnyLanguageModel LiteRT-LM
 
-Run Gemma 4 and other `.litertlm` models on iPhone and Mac through
-[AnyLanguageModel](https://github.com/huggingface/AnyLanguageModel)'s `LanguageModelSession`.
-`@Generable` output uses [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM)'s constrained decoding.
-On an iPhone 18 Pro (iOS 27.2) with LiteRT-LM v0.19.0, Gemma 4 E2B streamed its reply at 88.6 tokens
-per second, and a nested `@Generable` trip plan came back in 3.7 seconds (measured 2026-11-07).
+A Swift package that adds Gemma 4 and other `.litertlm` models, running on-device on iPhone and Mac, to
+[AnyLanguageModel](https://github.com/huggingface/AnyLanguageModel), Hugging Face's drop-in replacement for Apple's Foundation Models API.
+You write the same `LanguageModelSession` and `@Generable` code, and it builds for iOS 17 and macOS 14 or later, older versions than Apple's own framework supports. I've run it on iOS 27.2 and macOS 27.0.
+Google's [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM) runtime does the work, and its constrained decoding enforces your `@Generable` schema.
+
+On 2026-11-07, Gemma 4 E2B streamed its reply at 88.6 tokens per second on an iPhone 18 Pro with LiteRT-LM v0.19.0.
+A one-day trip plan built from nested `@Generable` types came back in 3.7 seconds.
+Tools and images are not supported yet.
 
 Community package, not affiliated with Google, Apple or Hugging Face.
 
 ## Quickstart
+
+You need Swift 6.3 or newer. On iOS, the GPU needs a physical device and an Xcode-signed app. The iOS Simulator runs on the CPU.
 
 ```swift
 // Package.swift
@@ -31,27 +36,19 @@ let response = try await session.respond(to: "Write a haiku about the sea.")
 print(response.content)
 ```
 
-`load()` downloads the model into `Application Support/LiteRTModels` on the first run (resumable;
-progress through `onDownloadProgress:`), then loads the engine. A request on a model that is not
-loaded yet does the same before it answers. `prewarm()` on the session starts it in the background.
+`load()` downloads the model into `Application Support/LiteRTModels` on the first run, then loads the engine.
+Interrupted downloads resume. To show progress, pass `onDownloadProgress:` when you create the model. You can also skip `load()`: the
+first request downloads and loads the model before it answers. To load it ahead of time, in the background,
+call `prewarm()` on the session.
 
 `.gemma4_E2B` is `gemma-4-E2B-it.litertlm` from
-[litert-community/gemma-4-E2B-it-litert-lm](https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm);
-it needs a device with at least 7 GB of RAM.
+[litert-community/gemma-4-E2B-it-litert-lm](https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm).
+It needs a device with at least 7 GB of RAM.
 
-The complete app is [Samples/LiteRTLMDemo](Samples/LiteRTLMDemo): a streaming chat, a structured-output
+A complete sample app is in [Samples/LiteRTLMDemo](Samples/LiteRTLMDemo): a streaming chat, a structured-output
 screen, and a self-test that runs the checks listed in [docs/tested-devices.md](docs/tested-devices.md)
 on a device and prints the results. Open `Samples/LiteRTLMDemo/LiteRTLMDemo.xcodeproj`, set your team
-under Signing, and run it on an iPhone (`project.yml` regenerates the project with XcodeGen).
-
-### Compared with the Foundation Models route
-
-On iOS 27 and macOS 27, in an app built with Swift 6.4, there is another way to reach LiteRT-LM from
-AnyLanguageModel: `FoundationLanguageModel` can wrap the Foundation Models backend of
-[swift-litert-lm](https://github.com/john-rocky/swift-litert-lm) (`LiteRTLanguageModel`), which steers
-structured output with the prompt only and does not read `GenerationOptions`. This package conforms to
-AnyLanguageModel's `LanguageModel` directly: it builds for iOS 17 and macOS 14 and later, enforces the
-`@Generable` schema with constrained decoding (llguidance), and applies `GenerationOptions`.
+under Signing, and run it on an iPhone. The Xcode project is generated from `project.yml` with XcodeGen.
 
 ## Structured output
 
@@ -78,15 +75,17 @@ struct TripPlan {
   var needsCar: Bool
 }
 
-let plan = try await session.respond(to: "Plan a one-day trip in Kyoto.", generating: TripPlan.self)
+let plan = try await session.respond(
+  to: "Plan a one-day trip in Kyoto.",
+  generating: TripPlan.self)
 print(plan.content.title, plan.content.stops.map(\.place))
 ```
 
-The schema goes to LiteRT-LM's constrained decoding, so the reply is JSON of the schema's shape with
-values inside the `@Guide` ranges and choices. Nested types and arrays work as declared. With
-`includeSchemaInPrompt: true` (the default) the backend adds one line to the prompt that names the
-top-level keys; the schema itself stays out of the prompt. `respond(to:schema:)` takes a
-`GenerationSchema` built at run time the same way.
+LiteRT-LM's constrained decoding enforces the schema, so the values stay inside the `@Guide` ranges
+and choices. Nested types and arrays work as declared. By default,
+`includeSchemaInPrompt: true` makes the backend add one line to the prompt that names the
+top-level keys. The schema itself stays out of the prompt. To build a schema at run time,
+pass a `GenerationSchema` to `respond(to:schema:)`.
 
 ## Streaming
 
@@ -101,14 +100,17 @@ task.cancel()
 ```
 
 ```swift
-for try await snapshot in session.streamResponse(to: "Plan a one-day trip in Kyoto.", generating: TripPlan.self) {
+for try await snapshot in session.streamResponse(
+  to: "Plan a one-day trip in Kyoto.",
+  generating: TripPlan.self
+) {
   let partial = snapshot.content  // TripPlan.PartiallyGenerated
   print(partial.title ?? "…", partial.stops?.count ?? 0)
 }
 ```
 
 Cancelling the task that reads a stream ends the loop without an error. Cancelling a `respond` call
-throws `CancellationError`. Either way the next request on the same model answers.
+throws `CancellationError`. Either way, the model stays usable for the next request.
 
 ## Your own model file
 
@@ -116,16 +118,23 @@ throws `CancellationError`. Either way the next request on the same model answer
 // A .litertlm on disk: bundled, sideloaded or fine-tuned.
 let local = LiteRTLMLanguageModel(modelFileURL: fileURL)
 
-// Any .litertlm on Hugging Face, downloaded on first use.
+// Any public .litertlm on Hugging Face, downloaded on first use.
 let hub = LiteRTLMLanguageModel(
   huggingFaceRepo: "litert-community/gemma-4-E2B-it-litert-lm",
   fileName: "gemma-4-E2B-it.litertlm")
 ```
 
-Both take `backend:` (`.gpu` by default; `Backend` comes with this module, no extra import), `maxTokens:` (the context size, 2048 by default) and
-`cacheDirectory:` (where LiteRT-LM writes its GPU cache; the app's Caches by default). On a Mac with
-macOS 27.0 the cache for Gemma 4 E2B was 0.79 GB (2026-11-07). To convert a model to `.litertlm`,
-see [hf-to-litertlm](https://github.com/john-rocky/hf-to-litertlm).
+The download sends no Hugging Face token, so files in private and gated repos fail to download. Download those yourself and use `modelFileURL:`.
+
+Both initializers also take these arguments:
+
+| Argument | What it sets | Default |
+|---|---|---|
+| `backend:` | The compute backend | `.gpu` |
+| `maxTokens:` | The context size | 2048 |
+| `cacheDirectory:` | Where LiteRT-LM writes its GPU cache | The app's Caches |
+
+To convert a model to `.litertlm`, see [hf-to-litertlm](https://github.com/john-rocky/hf-to-litertlm).
 
 ## Availability and errors
 
@@ -140,77 +149,33 @@ case .unavailable(let reason):
 }
 ```
 
-`availability` reports `.modelFileMissing(url)`, `.notDownloaded`, `.insufficientMemory` (the catalog
-model needs a device with at least 7 GB of RAM; `allowUnsafeMemory: true` skips the check) and
-`.loadFailed(message)` after a load threw. A failed load is tried again on the next request.
+`availability` reports `.modelFileMissing(url)`, `.notDownloaded`, `.insufficientMemory` or, after a
+load threw, `.loadFailed(message)`. `allowUnsafeMemory: true` skips the memory check. A failed load is tried again on the next request.
 
-`GenerationError` is AnyLanguageModel's error type; `LiteRTLMLanguageModelError` is this package's.
+Most errors are AnyLanguageModel's `GenerationError` or this package's `LiteRTLMLanguageModelError`. A cancelled `respond` throws `CancellationError`, and other runtime failures arrive as swift-litert-lm's `LiteRTLMError`.
 
 | What happened | A request throws |
 |---|---|
-| No model file, or LiteRT-LM cannot load it | `GenerationError.assetsUnavailable`, with LiteRT-LM's message in the context |
-| The schema is one LiteRT-LM's constrained decoding does not take | `GenerationError.unsupportedGuide` |
+| No model file, or LiteRT-LM cannot load it | `GenerationError.assetsUnavailable`, with the error message in the context |
+| LiteRT-LM's constrained decoding can't handle the schema | `GenerationError.unsupportedGuide` |
 | The input is longer than `maxTokens` | `GenerationError.exceededContextWindowSize` |
 | A structured reply does not decode, for example one cut off by `maximumResponseTokens` | `GenerationError.decodingFailure` |
 | The session has tools, or the prompt has an image | `LiteRTLMLanguageModelError.toolsNotSupported` / `.unsupportedContent` |
 
-`load()` throws `LiteRTLMLanguageModelError` (`.modelFileMissing`, `.insufficientMemory`,
-`.downloadFailed`, `.loadFailed`).
-
-## Generation options
-
-| `GenerationOptions` | LiteRT-LM | Applied |
-|---|---|---|
-| all `nil` | topK 40, topP 0.95, temperature 0.8, a random seed per request | yes |
-| `temperature` | the sampler's temperature | yes |
-| `sampling: .greedy` | topK 1, temperature 0 | yes |
-| `.random(top: k, seed:)` | topK k, at most 64 | yes |
-| `.random(probabilityThreshold: p, seed:)` | topP p within the 64 most likely tokens | yes |
-| `maximumResponseTokens` | the output limit of the request | yes |
-| `toolCallingMode` | `.disallowed` lets a session with tools through, without calling them; any other value throws `toolsNotSupported` | partly |
-| `maximumToolRounds` | — | no (no tool calling yet) |
-
-For repeatable output, pass `seed:` to `.random(top:seed:)` or `.random(probabilityThreshold:seed:)`;
-`.greedy` gave the same bytes in two runs on a Mac (2026-11-07).
+`load()` throws `LiteRTLMLanguageModelError`: `.modelFileMissing`, `.insufficientMemory`,
+`.downloadFailed` or `.loadFailed`.
 
 ## Requirements
 
-- iOS 17+ or macOS 14+, Swift 6.3+ (AnyLanguageModel 1.2.0 needs tools version 6.3). Built and tested
-  with Xcode 27.0 (Swift 6.4).
-- The Metal GPU engages in an Xcode-signed app on a physical device; the iOS Simulator runs on the CPU.
+- iOS 17+ or macOS 14+. Swift 6.3+, which AnyLanguageModel 1.2.0 needs. Built and tested
+  with Xcode 27.0 and Swift 6.4.
 - iOS and macOS only. LiteRT-LM's binaries have no Mac Catalyst or visionOS slice.
 - Devices and results so far: [docs/tested-devices.md](docs/tested-devices.md).
 
-## What resolving fetches
+## Documentation
 
-Resolving a package that depends on this package (by path) and on AnyLanguageModel, with an empty
-SwiftPM cache and no git-lfs on the PATH (2026-11-07, macOS 27.0, Xcode 27.0 (27A266a), Swift 6.4):
-
-| What | From | Size |
-|---|---|---|
-| 7 git repositories: swift-syntax, swift-collections, AnyLanguageModel, swift-litert-lm, swift-http-types, JSONSchema, EventSource | GitHub | 72.0 MB (swift-syntax 41.5 MB, swift-collections 22.5 MB) |
-| The LiteRT-LM v0.19.0 runtime: `CLiteRTLM.xcframework.zip` (iOS) and `CLiteRTLM_mac.xcframework.zip` (macOS) | LiteRT-LM's GitHub release | 95.8 MB + 47.0 MB |
-| A swift-syntax prebuilt for macros (`swift package` only; Xcode builds swift-syntax from source) | download.swift.org | 20.1 MB |
-
-The LiteRT-LM repository itself is not cloned, so resolving needs no git-lfs. The git sizes are the
-packs of the clones. A dependency by URL also clones this repository.
-
-## Behavior differences
-
-- The properties of a `@Generable` reply are generated in alphabetical order, not declaration order:
-  the backend sends the schema with sorted keys, and LiteRT-LM's constrained decoding follows the
-  schema's order, so a streamed value fills in alphabetically. `rawContent.jsonString` lists the keys in
-  no fixed order, because AnyLanguageModel's `GeneratedContent(json:)` keeps an object's keys in a
-  dictionary. The decoded value is the same either way.
-- Constrained decoding enforces the shape, ranges and choices, not the content: a `String` property can
-  come back empty.
-- topK is at most 64, the default top-k capacity of LiteRT-LM v0.19.0's GPU sampler. Past it, LiteRT-LM
-  recreates the sampler for the larger k, with GPU code that grows with k.
-- One request at a time per model file and settings; a second request waits its turn, and cancelling it
-  while it waits removes it from the queue.
-- Each request starts a new LiteRT-LM conversation and sends the session's transcript as its history,
-  so the whole transcript goes to the model on every turn; nothing is kept between requests.
-- No tool calling or image input yet. For audio, use swift-litert-lm's `LiteRTChat`.
+- [Details](docs/details.md): how `GenerationOptions` map to LiteRT-LM, what resolving the package downloads, behavior differences, and how this package differs from the Foundation Models backend in [swift-litert-lm](https://github.com/john-rocky/swift-litert-lm)
+- [Tested devices](docs/tested-devices.md)
 
 ## License
 

@@ -40,7 +40,9 @@ enum ReadmeExamples {
   }
 
   static func structuredOutput(_ session: LanguageModelSession) async throws {
-    let plan = try await session.respond(to: "Plan a one-day trip in Kyoto.", generating: TripPlan.self)
+    let plan = try await session.respond(
+      to: "Plan a one-day trip in Kyoto.",
+      generating: TripPlan.self)
     print(plan.content.title, plan.content.stops.map(\.place))
   }
 
@@ -55,7 +57,10 @@ enum ReadmeExamples {
   }
 
   static func structuredStreaming(_ session: LanguageModelSession) async throws {
-    for try await snapshot in session.streamResponse(to: "Plan a one-day trip in Kyoto.", generating: TripPlan.self) {
+    for try await snapshot in session.streamResponse(
+      to: "Plan a one-day trip in Kyoto.",
+      generating: TripPlan.self
+    ) {
       let partial = snapshot.content  // TripPlan.PartiallyGenerated
       print(partial.title ?? "…", partial.stops?.count ?? 0)
     }
@@ -65,7 +70,7 @@ enum ReadmeExamples {
     // A .litertlm on disk: bundled, sideloaded or fine-tuned.
     let local = LiteRTLMLanguageModel(modelFileURL: fileURL)
 
-    // Any .litertlm on Hugging Face, downloaded on first use.
+    // Any public .litertlm on Hugging Face, downloaded on first use.
     let hub = LiteRTLMLanguageModel(
       huggingFaceRepo: "litert-community/gemma-4-E2B-it-litert-lm",
       fileName: "gemma-4-E2B-it.litertlm")

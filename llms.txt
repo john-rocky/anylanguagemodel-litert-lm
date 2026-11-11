@@ -10,7 +10,8 @@
 
 ## Docs
 
-- [README](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/README.md): quickstart, structured output, streaming, own model files, availability and errors, generation options, behavior differences
+- [README](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/README.md): quickstart, structured output, streaming, own model files, availability and errors.
+- [docs/details.md](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/docs/details.md): generation options, what resolving fetches, behavior differences, the Foundation Models route.
 - [AGENTS.md](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/AGENTS.md): which API for which task, and the rules that fail on a real device
 - [Tested devices](https://github.com/john-rocky/anylanguagemodel-litert-lm/blob/main/docs/tested-devices.md): device, OS, runtime version and results
 
